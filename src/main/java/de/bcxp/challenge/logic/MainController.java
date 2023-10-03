@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import de.bcxp.challenge.tools.CSVParser;
+import de.bcxp.challenge.tools.IReader;
 
 public class MainController {
 
@@ -53,11 +54,12 @@ public class MainController {
 
     private String getDayWithSmallestTempSpread() throws IOException, ParseException {
         
-        CSVParser parser = new CSVParser(properties.getProperty("weather.path"));
-        Map<String, Map<String, String>> weather = parser.readCSV();
+        IReader reader = new CSVParser(properties.getProperty("weather.path"));
+        Map<String, Map<String, String>> weather = reader.readTable();
 
         double minTmpSpread = 0;
         String dayWithSmallestTempSpread = "";
+
         for (String key : weather.keySet()) {
             double maxT = format.parse(weather.get(key).get(MAX_TEMP)).doubleValue();
             double minT = format.parse(weather.get(key).get(MIN_TEMP)).doubleValue();
@@ -75,13 +77,12 @@ public class MainController {
 
     private String getCountryWithHighestPopDensity() throws IOException, ParseException {
 
-        CSVParser parser = new CSVParser(properties.getProperty("countries.path"));
-        Map<String, Map<String, String>> countries = parser.readCSV();
+        IReader reader = new CSVParser(properties.getProperty("countries.path"));
+        Map<String, Map<String, String>> countries = reader.readTable();
 
-        // Population countries
-        String countryWithHighestPopulationDensity = ""; // Your population density analysis function call …
-
+        String countryWithHighestPopulationDensity = ""; 
         double maxPopDensity = 0;
+
         for (String key : countries.keySet()) {
             double population = format.parse(countries.get(key).get("Population")).doubleValue();
             double area = format.parse(countries.get(key).get("Area (km²)")).doubleValue();

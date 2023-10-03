@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CSVParser {
+import lombok.Getter;
+
+@Getter
+public class CSVParser implements IReader{
     
     private String DELIMITER;
     private String path;
@@ -18,8 +21,8 @@ public class CSVParser {
         detectDeliminter(path);
     }
 
-    public Map<String, Map<String, String>> readCSV() throws FileNotFoundException, IOException {
-
+    @Override
+    public Map<String, Map<String, String>> readTable() throws FileNotFoundException, IOException {
         Map<String, Map<String, String>> records = new HashMap<>();
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line = br.readLine();
@@ -27,7 +30,6 @@ public class CSVParser {
 
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(DELIMITER);
-                Map<String, String> record = new HashMap<>(headers.length - 1);
 
                 if (values.length != headers.length) {
                     System.out.println("record omitted, because of wrong format");
@@ -35,6 +37,7 @@ public class CSVParser {
                     continue;
                 }
 
+                Map<String, String> record = new HashMap<>(headers.length - 1);
                 for (int col = 1; col < headers.length; col++) {
                     record.put(headers[col], values[col]);
                 }
@@ -45,7 +48,7 @@ public class CSVParser {
         return records;
     }
 
-    private void detectDeliminter(String path) throws IOException {
+    private void detectDeliminter(String path) throws FileNotFoundException, IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line = br.readLine();
 
@@ -61,4 +64,12 @@ public class CSVParser {
         }
     }
 
+    public void setDELIMITER(String DELIMITER) {
+        this.DELIMITER = DELIMITER;
+    }
+
+    public void setPath(String path) throws FileNotFoundException, IOException {
+        this.path = path;
+        detectDeliminter(path);
+    }
 }

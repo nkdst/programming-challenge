@@ -3,6 +3,9 @@ package de.bcxp.challenge;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -20,6 +23,7 @@ public final class App {
      */
     public static void main(String... args) {
 
+
         // Your preparation code …
 
         // Properties
@@ -34,52 +38,63 @@ public final class App {
         
 
         CSVParser parser = new CSVParser();
-        Map<String, Map<String, String>> weather = parser.readCSV(properties.getProperty("weather.path"));
-        Map<String, Map<String, String>> countries = parser.readCSV(properties.getProperty("countries.path"));
-        
-        double minTmpSpread = 0;
-        String dayWithSmallestTempSpread = "Someday";     // Your day analysis function call …
-        for (String key : weather.keySet()) {
-            double maxT = Double.parseDouble(weather.get(key).get("MxT"));
-            double minT = Double.parseDouble(weather.get(key).get("MnT"));
-            double tmpSpread = maxT - minT;
+        Map<String, Map<String, String>> weather;
+        Map<String, Map<String, String>> countries;
+        try {
+            weather = parser.readCSV(properties.getProperty("weather.path"));
+            countries = parser.readCSV(properties.getProperty("countries.path"));
 
-            System.out.printf("Day %3s : %6.2f %n", key, tmpSpread);
+            double minTmpSpread = 0;
+            String dayWithSmallestTempSpread = "Someday";     // Your day analysis function call …
+            NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
+            for (String key : weather.keySet()) {
+                double maxT = format.parse(weather.get(key).get("MxT")).doubleValue();
+                double minT = format.parse(weather.get(key).get("MnT")).doubleValue();
+                double tmpSpread = maxT - minT;
 
-            if (tmpSpread > minTmpSpread) {
-                minTmpSpread = tmpSpread;
-                dayWithSmallestTempSpread = key;
+                // System.out.printf("Day %3s : %6.2f %n", key, tmpSpread);
+
+                if (tmpSpread > minTmpSpread) {
+                    minTmpSpread = tmpSpread;
+                    dayWithSmallestTempSpread = key;
+                }
             }
-        }
-        
-        System.out.printf("Day with smallest temperature spread: %s%n", dayWithSmallestTempSpread);
+            
+            System.out.printf("Day with smallest temperature spread: %s%n", dayWithSmallestTempSpread);
 
-        
+            
 
-        // Population countries
-        String countryWithHighestPopulationDensity = "Some country"; // Your population density analysis function call …
+            // Population countries
+            String countryWithHighestPopulationDensity = "Some country"; // Your population density analysis function call …
 
-        double maxPopDensity = 0;
-        for (String key : countries.keySet()) {
-            try {
-                double population = Double.parseDouble(countries.get(key).get("Population"));
-                double area = Double.parseDouble(countries.get(key).get("Area (km²)"));
+            double maxPopDensity = 0;
+            for (String key : countries.keySet()) {
+                double population = format.parse(countries.get(key).get("Population")).doubleValue();
+                double area = format.parse(countries.get(key).get("Area (km²)")).doubleValue();
                 double popDensity = population / area;
 
-                System.out.printf("Country %15s : %6.2f %n", key, popDensity);
+                // System.out.printf("Country %15s : %6.2f %n", key, popDensity);
 
                 if (popDensity > maxPopDensity) {
                     maxPopDensity = popDensity;
                     countryWithHighestPopulationDensity = key;
                 }
-            } catch (Exception e) {
-                System.out.println("Error in parsing");
             }
+
+
+
+
+            System.out.printf("Country with highest population density: %s%n", countryWithHighestPopulationDensity);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-
-
-
-
-        System.out.printf("Country with highest population density: %s%n", countryWithHighestPopulationDensity);
+        
     }
 }

@@ -11,13 +11,18 @@ import java.util.Map;
 public class CSVParser {
     
     private String DELIMITER;
+    private String path;
 
-    public Map<String, Map<String, String>> readCSV(String path) throws FileNotFoundException, IOException {
+    public CSVParser(String path) throws IOException {
+        this.path = path;
+        detectDeliminter(path);
+    }
+
+    public Map<String, Map<String, String>> readCSV() throws FileNotFoundException, IOException {
 
         Map<String, Map<String, String>> records = new HashMap<>();
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line = br.readLine();
-            detectDeliminter(line);
             String[] headers = line.split(DELIMITER);
 
             while ((line = br.readLine()) != null) {
@@ -40,18 +45,20 @@ public class CSVParser {
         return records;
     }
 
-    private void detectDeliminter(String line) {
-        if (line.contains(";")) {
-            DELIMITER = ";";
-            System.out.println("Detected delimiter: ;");
-        } else if (line.contains(",")) {
-            DELIMITER = ",";
-            System.out.println("Detected delimiter: ,");
-        } else {
-            throw new IllegalStateException("No delimiter detected");
+    private void detectDeliminter(String path) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            String line = br.readLine();
+
+            if (line.contains(";")) {
+                DELIMITER = ";";
+                // System.out.println("Detected delimiter: ;");
+            } else if (line.contains(",")) {
+                DELIMITER = ",";
+                // System.out.println("Detected delimiter: ,");
+            } else {
+                throw new IllegalStateException("No delimiter detected");
+            }
         }
     }
-
-
 
 }

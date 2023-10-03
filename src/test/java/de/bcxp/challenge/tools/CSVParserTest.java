@@ -25,10 +25,10 @@ public class CSVParserTest {
     @BeforeEach
     void setUp() {
         try {
-            reader = new CSVParser("src/main/resources/de/bcxp/challenge/countries.csv");
+            reader = new CSVReader("src/main/resources/de/bcxp/challenge/countries.csv");
             countries = reader.readTable();
 
-            reader = new CSVParser("src/main/resources/de/bcxp/challenge/weather.csv");
+            reader = new CSVReader("src/main/resources/de/bcxp/challenge/weather.csv");
             weather = reader.readTable();
         } catch (FileNotFoundException e) {
             fail("test file not found");

@@ -11,12 +11,12 @@ import java.util.Map;
 import lombok.Getter;
 
 @Getter
-public class CSVParser implements IReader{
+public class CSVReader implements IReader{
     
     private String DELIMITER;
     private String path;
 
-    public CSVParser(String path) throws IOException {
+    public CSVReader(String path) throws IOException {
         this.path = path;
         detectDeliminter(path);
     }

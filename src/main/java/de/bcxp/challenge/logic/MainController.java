@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import de.bcxp.challenge.tools.CSVParser;
+import de.bcxp.challenge.tools.CSVReader;
 import de.bcxp.challenge.tools.IReader;
 
 public class MainController {
@@ -33,10 +33,10 @@ public class MainController {
             String countryWithHighestPopulationDensity = getCountryWithHighestPopDensity();
             System.out.printf("Country with highest population density: %s%n", countryWithHighestPopulationDensity);
         } catch (IOException e) {
-            System.out.println("Error while reading csv data");
+            System.out.println("Error while reading data");
             e.printStackTrace();
         } catch (ParseException e) {
-            System.out.println("parsing error while reading csv data");
+            System.out.println("parsing error while reading data");
             e.printStackTrace();
         }
     }
@@ -54,7 +54,7 @@ public class MainController {
 
     private String getDayWithSmallestTempSpread() throws IOException, ParseException {
         
-        IReader reader = new CSVParser(properties.getProperty("weather.path"));
+        IReader reader = new CSVReader(properties.getProperty("weather.path"));
         Map<String, Map<String, String>> weather = reader.readTable();
 
         double minTmpSpread = 0;
@@ -77,7 +77,7 @@ public class MainController {
 
     private String getCountryWithHighestPopDensity() throws IOException, ParseException {
 
-        IReader reader = new CSVParser(properties.getProperty("countries.path"));
+        IReader reader = new CSVReader(properties.getProperty("countries.path"));
         Map<String, Map<String, String>> countries = reader.readTable();
 
         String countryWithHighestPopulationDensity = ""; 
